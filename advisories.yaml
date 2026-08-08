@@ -29,13 +29,13 @@ records:
   in_the_wild:
     service: ollama
     first_seen: '2026-07-28'
-    last_seen: '2026-08-05'
-    probes_30d: 367
-    probes_observed: 367
+    last_seen: '2026-08-08'
+    probes_30d: 868
+    probes_observed: 868
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0001
   published: '2026-08-05'
-  updated: '2026-08-05'
+  updated: '2026-08-08'
 - type: exposure-class
   product: n8n
   title: n8n instance open — settings or owner-setup reachable without login
@@ -58,13 +58,13 @@ records:
   in_the_wild:
     service: n8n
     first_seen: '2026-07-28'
-    last_seen: '2026-08-05'
-    probes_30d: 431
-    probes_observed: 431
+    last_seen: '2026-08-08'
+    probes_30d: 558
+    probes_observed: 558
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0002
   published: '2026-08-05'
-  updated: '2026-08-05'
+  updated: '2026-08-08'
 - type: exposure-class
   product: Open WebUI
   title: Open WebUI reachable from the internet
@@ -124,13 +124,13 @@ records:
   in_the_wild:
     service: langfuse
     first_seen: '2026-07-28'
-    last_seen: '2026-08-05'
-    probes_30d: 2399
-    probes_observed: 2399
+    last_seen: '2026-08-08'
+    probes_30d: 2692
+    probes_observed: 2692
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0005
   published: '2026-08-05'
-  updated: '2026-08-05'
+  updated: '2026-08-08'
 - type: exposure-class
   product: ComfyUI
   title: ComfyUI open to the internet
@@ -197,13 +197,13 @@ records:
   in_the_wild:
     service: qdrant
     first_seen: '2026-08-03'
-    last_seen: '2026-08-05'
-    probes_30d: 22
-    probes_observed: 22
+    last_seen: '2026-08-08'
+    probes_30d: 47
+    probes_observed: 47
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0008
   published: '2026-08-05'
-  updated: '2026-08-05'
+  updated: '2026-08-08'
 - type: exposure-class
   product: Qdrant
   title: Qdrant gRPC data plane (:6334) accepts connections
@@ -365,13 +365,13 @@ records:
   in_the_wild:
     service: gradio
     first_seen: '2026-08-02'
-    last_seen: '2026-08-04'
-    probes_30d: 3
-    probes_observed: 3
+    last_seen: '2026-08-07'
+    probes_30d: 7
+    probes_observed: 7
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0015
   published: '2026-08-05'
-  updated: '2026-08-05'
+  updated: '2026-08-08'
 - type: exposure-class
   product: Langflow
   title: Langflow instance exposed to the internet
@@ -434,13 +434,13 @@ records:
   in_the_wild:
     service: chroma
     first_seen: '2026-08-03'
-    last_seen: '2026-08-05'
-    probes_30d: 245
-    probes_observed: 245
+    last_seen: '2026-08-08'
+    probes_30d: 399
+    probes_observed: 399
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0018
   published: '2026-08-05'
-  updated: '2026-08-05'
+  updated: '2026-08-08'
 - type: exposure-class
   product: Weaviate
   title: Weaviate vector database open without authentication
@@ -657,13 +657,13 @@ records:
   in_the_wild:
     service: mcp
     first_seen: '2026-08-02'
-    last_seen: '2026-08-05'
-    probes_30d: 304
-    probes_observed: 304
+    last_seen: '2026-08-08'
+    probes_30d: 572
+    probes_observed: 572
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0028
   published: '2026-08-05'
-  updated: '2026-08-05'
+  updated: '2026-08-08'
 - type: exposure-class
   product: MLflow
   title: MLflow tracking UI/API reachable without authentication

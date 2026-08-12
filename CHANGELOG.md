@@ -2,6 +2,18 @@
 
 Notable changes per release. Full notes and SHA-256 sums: [GitHub releases](https://github.com/unauthdev/aicheck-scan/releases).
 
+## v2.0.0 — 2026-08-12
+
+Breaking for the GitHub Action only. The CLI is unchanged.
+
+- Root Action is now `aicheck agents`. `uses: unauthdev/aicheck-scan@v2`
+  fails the build if coding-agent credential files land in git. No `target`
+  input. No network.
+- Live-probe moved to `uses: unauthdev/aicheck-scan/scan@v2` (`target` still
+  required).
+- `uses: unauthdev/aicheck-scan/agents@v2` is an alias of the root Action.
+- `@v1` is frozen leftover live-probe. Do not move that tag.
+
 ## v1.3.0 — 2026-08-12
 
 - `aicheck agents`: local-only gate for coding-agent credential files from the

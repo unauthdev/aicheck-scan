@@ -6,6 +6,8 @@ name: selftest
 # any "checker ... error:" line appears in the scan log.
 # Fixture image tags are pinned — review bumps monthly (the schedule below,
 # same cadence as last_verified on the CVE map).
+#
+# v2: root Action is aicheck agents (no network). Live-probe is ./scan.
 
 on:
   pull_request:
@@ -16,6 +18,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  agents-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - name: aicheck agents (expected to pass on this repo)
+        uses: ./
+
   exposed-fixtures:
     runs-on: ubuntu-latest
     permissions:
@@ -36,14 +45,9 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
 
-      # The action itself: this must FAIL the step (default containers are
-      # unauthenticated — that is the point). Its job summary doubles as the
-      # living demo for the Marketplace page. upload-sarif: true exercises the
-      # findings-present SARIF shape (http-scheme artifact URIs) against
-      # GitHub code scanning — the clean-fixture job only covers zero results.
       - name: aicheck (expected to fail the build)
         id: exposed
-        uses: ./
+        uses: ./scan
         continue-on-error: true
         with:
           target: localhost
@@ -57,14 +61,13 @@ jobs:
           test "${{ steps.exposed.outcome }}" = "failure"
           test "${{ steps.exposed.outputs.grade }}" = "F"
 
-          # CLI pass for greppable stderr and a direct exit-code check
           python -m pip install --quiet .
           set +e
           python -m aicheck.scan localhost --allow-private --format json --fail-grade F \
             > cli.json 2> stderr.log
           code=$?
           set -e
-          test "$code" = "1"   # grade F at fail-grade F → exit 1
+          test "$code" = "1"
 
           if grep -q "checker .* error:" stderr.log; then
             echo "::error::silent checker failure detected:"
@@ -77,14 +80,13 @@ jobs:
               || { echo "::error::expected check_id '$id' missing from findings"; exit 1; }
           done
 
-          # privacy: the CI artifacts must never name the raw target
           ! grep -q "localhost" aicheck.json
           ! grep -q "localhost" aicheck.sarif
 
   clean-fixture:
     runs-on: ubuntu-latest
     services:
-      nginx:   # answers on a probed port (80) but is not an AI service
+      nginx:
         image: nginx:1.27.4
         ports: ["80:80"]
     steps:
@@ -92,7 +94,7 @@ jobs:
 
       - name: aicheck (expected to pass clean)
         id: clean
-        uses: ./
+        uses: ./scan
         with:
           target: localhost
           fail-grade: F
@@ -111,9 +113,6 @@ jobs:
           test ! -s stderr.log
 
   sarif-upload:
-    # exercises the codeql-action/upload-sarif path for real (the other jobs
-    # run upload-sarif: false) so an upload-sarif version bump can't silently
-    # break users; clean fixture -> step must succeed including the upload
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -126,7 +125,7 @@ jobs:
 
       - name: aicheck with SARIF upload enabled
         id: up
-        uses: ./
+        uses: ./scan
         with:
           target: localhost
           fail-grade: F
@@ -141,9 +140,6 @@ jobs:
           test -s aicheck.sarif
 
   render-matrix:
-    # covers the render/redact pipeline GitLab users run (the GitHub action
-    # path above can't see a redact regression — e.g. a target that equals a
-    # product slug corrupting check_id/fix_card_id)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
@@ -176,16 +172,11 @@ jobs:
             python -c "import json; json.load(open('out.json')); json.load(open('out.sarif'))"
             grep -q '"check_id": "ollama"' out.json
             grep -q '"fix_card_id": "ollama-exposed"' out.json
-            # raw target survives nowhere in URL context. URL-anchored greps
-            # only: 'target' (the adversarial case) is a substring of the
-            # ci-scan-target placeholder, so bare-substring greps false-fail.
             ! grep -q "http://$target" out.json out.sarif out.summary
             grep -q "unauth.dev/fixes/ollama-exposed" out.summary
           done
 
   gitlab-sim:
-    # executes the documented .gitlab-ci.yml pipeline (shell simulation of a
-    # GitLab runner) — the docs can never drift from a working config
     runs-on: ubuntu-latest
     services:
       ollama:
@@ -200,7 +191,7 @@ jobs:
       - name: the README's GitLab script, verbatim modulo the clone
         shell: bash
         run: |
-          python -m pip install --quiet .   # the docs' clone+install step
+          python -m pip install --quiet .
           TARGET=localhost
           aicheck "$TARGET" --allow-private --format json --fail-grade F > "$PWD/aicheck.json" || code=$?
           test -s "$PWD/aicheck.json" && python -m aicheck.render "$PWD/aicheck.json" --format sarif --redact > "$PWD/aicheck.sarif" || true
@@ -213,7 +204,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "${{ steps.gitlab.outputs.pipeline_exit }}" = "1"   # grade F at fail-grade F
+          test "${{ steps.gitlab.outputs.pipeline_exit }}" = "1"
           test -s aicheck.json && test -s aicheck.sarif
           grep -q '"grade": "F"' aicheck.json
           ! grep -q "localhost" aicheck.sarif

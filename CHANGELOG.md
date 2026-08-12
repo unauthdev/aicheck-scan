@@ -2,6 +2,15 @@
 
 Notable changes per release. Full notes and SHA-256 sums: [GitHub releases](https://github.com/unauthdev/aicheck-scan/releases).
 
+## v1.3.0 — 2026-08-12
+
+- `aicheck agents`: local-only gate for coding-agent credential files from the
+  [unauth.dev loot list](https://unauth.dev/loot). `--ci` fails on presence in
+  the checkout, a Docker `--context`, or `--artifacts`. Home presence is ok
+  unless the file is world-readable (or `--fail-home`).
+- Composite Action: `uses: unauthdev/aicheck-scan/agents@main`.
+- The root live-probe Action (`uses: unauthdev/aicheck-scan@v1`) is unchanged.
+
 ## v1.2.5 — 2026-08-05
 
 - Passive discovery: `aicheck inventory --flow-logs` turns AWS VPC flow logs (or generic JSONL) into an attributed AI-service inventory with zero probing. `--verify` sweeps what it finds.

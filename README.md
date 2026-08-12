@@ -13,8 +13,7 @@ in 11 seconds, including `.claude`, `.codex`, `.qwen`. The list is public:
 those files. No network.
 
 The hosted scanner at [unauth.dev](https://unauth.dev) names the door. It
-never fetches these files on a host you submit. This is not a laptop
-scanner and not an endpoint canary product.
+never fetches these files on a host you submit.
 
 The documented command is `aicheck-scan`; the package also installs `aicheck`
 as a short alias.
@@ -67,7 +66,7 @@ Relative paths from loot list v1, coding-agent families only:
 `.config/opencode/opencode.json`, `.local/share/opencode/auth.json`.
 
 A random `.env` is not a hit. `.qwen/.env` is. Cite:
-`unauth.dev loot list v1 — observed 2026-08-10 · CC-BY 4.0`.
+`unauth.dev loot list v1, observed 2026-08-10, CC-BY 4.0`.
 
 ## Live-probe leftover
 

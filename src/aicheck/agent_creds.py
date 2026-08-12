@@ -14,7 +14,7 @@ import stat
 import sys
 from pathlib import Path
 
-CITE = "unauth.dev loot list v1 — observed 2026-08-10 · CC-BY 4.0"
+CITE = "unauth.dev loot list v1, observed 2026-08-10, CC-BY 4.0"
 LOOT_URL = "https://unauth.dev/loot"
 CANARY_URL = "https://unauth.dev/canary?flavor=loot"
 

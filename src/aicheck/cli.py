@@ -5,6 +5,7 @@ One binary, two modes (same engine, same probe model):
   aicheck <target> ...              # CI / single-host scan (legacy shape)
   aicheck scan <target> ...         # explicit scan
   aicheck inventory --targets ...   # local continuous estate inventory
+  aicheck agents [--home DIR]       # local coding-agent credential files
 
 GitHub Action, PyPI, and Docker all drive this entrypoint.
 """
@@ -14,7 +15,7 @@ from __future__ import annotations
 import sys
 
 
-_SUBCOMMANDS = {"scan", "inventory", "inv", "template"}
+_SUBCOMMANDS = {"scan", "inventory", "inv", "template", "agents"}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -28,15 +29,20 @@ def main(argv: list[str] | None = None) -> int:
             "usage: aicheck <target> [scan flags]\n"
             "       aicheck scan <target> [scan flags]\n"
             "       aicheck inventory --targets FILE --state-dir DIR [flags]\n"
+            "       aicheck agents [--home DIR] [--format text|json]\n"
             "       aicheck template <file|https-url> [...] [--format text|json]\n"
             "\n"
             "Same engine for CI (scan) and local continuous inventory.\n"
+            "agents: local-only inventory of coding-agent credential files (no network).\n"
             "Probe contract: docs/PROBES.md · https://unauth.dev"
         )
         return 0
     if argv and argv[0] in ("inventory", "inv"):
         from .inventory import main as inventory_main
         return inventory_main(argv[1:])
+    if argv and argv[0] == "agents":
+        from .agent_creds import main as agents_main
+        return agents_main(argv[1:])
     if argv and argv[0] == "scan":
         from .scan import main as scan_main
         return scan_main(argv[1:])

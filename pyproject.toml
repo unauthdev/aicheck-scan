@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "aicheck-scan"
 dynamic = ["version"]
-description = "Live-probe scanner for exposed self-hosted AI services — CI gate plus local continuous inventory (Ollama, n8n, vLLM, Langfuse, Open WebUI, ComfyUI, MCP and more)."
+description = "Fail CI if coding-agent credential files (.claude, .codex, .qwen) land in git. Also a GET-only scanner for exposed self-hosted AI services."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Raúl Acedo", email = "security@unauth.dev" }]
-keywords = ["security", "ci", "ai", "scanner", "sarif", "devsecops", "asm", "inventory"]
+keywords = ["security", "ci", "ai", "scanner", "credentials", "devsecops"]
 classifiers = [
     "Topic :: Security",
     "License :: OSI Approved :: MIT License",
@@ -30,6 +30,7 @@ aicheck-scan = "aicheck.cli:main"
 
 [project.urls]
 Homepage = "https://unauth.dev"
+Loot = "https://unauth.dev/loot"
 Source = "https://github.com/unauthdev/aicheck-scan"
 Issues = "https://github.com/unauthdev/aicheck-scan/issues"
 

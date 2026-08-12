@@ -7,12 +7,14 @@
 
 Fail the build if coding-agent credential files land in git.
 
-`aicheck agents --ci` walks the checkout, an optional Docker context, and the
-runner home. Checkout / context / artifacts fail on **presence**. Home fails
-only if a file is **world-readable** (Claude Code on the runner is otherwise
-ok). No network. The path list is
-[unauth.dev/loot](https://unauth.dev/loot) (102 GET paths, one session,
-10 August 2026).
+On 10 August 2026 one session asked an n8n decoy for 102 filesystem paths
+in 11 seconds, including `.claude`, `.codex`, `.qwen`. The list is public:
+[unauth.dev/loot](https://unauth.dev/loot). This repo is the CI gate for
+those files. No network.
+
+The hosted scanner at [unauth.dev](https://unauth.dev) names the door. It
+never fetches these files on a host you submit. This is not a laptop
+scanner and not an endpoint canary product.
 
 The documented command is `aicheck-scan`; the package also installs `aicheck`
 as a short alias.
@@ -44,11 +46,14 @@ snippets). Optional inputs: `context` (Docker build context), `artifacts`,
 ```bash
 pip install aicheck-scan
 aicheck agents --ci
-aicheck agents --home "$HOME"          # laptop inventory; does not fail CI
+aicheck agents --home "$HOME"          # list files under $HOME; does not fail CI
 aicheck agents --ci --context .        # also walk a Docker context
 ```
 
-Exit 1 if a listed file is in the tree you asked it to fail on. JSON:
+`aicheck agents --ci` walks the checkout, an optional Docker context, and the
+runner home. Checkout / context / artifacts fail on **presence**. Home fails
+only if a file is **world-readable** (Claude Code on the runner is otherwise
+ok). Exit 1 if a listed file is in the tree you asked it to fail on. JSON:
 `aicheck agents --ci --format json`.
 
 ## What it looks for
@@ -63,9 +68,6 @@ Relative paths from loot list v1, coding-agent families only:
 
 A random `.env` is not a hit. `.qwen/.env` is. Cite:
 `unauth.dev loot list v1 — observed 2026-08-10 · CC-BY 4.0`.
-
-The hosted scanner at [unauth.dev](https://unauth.dev) names the door (open
-n8n, Ollama, …). It never fetches these files on a host you submit.
 
 ## Live-probe leftover
 

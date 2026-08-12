@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "aicheck-scan"
 dynamic = ["version"]
-description = "Fail CI if coding-agent credential files (.claude, .codex, .qwen) land in git. Also a GET-only scanner for exposed self-hosted AI services."
+description = "Fail CI if coding-agent credential files land in git. Path list: unauth.dev/loot. Also a GET-only scanner for exposed self-hosted AI."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

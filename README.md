@@ -2,6 +2,7 @@
 
 [![selftest](https://github.com/unauthdev/aicheck-scan/actions/workflows/selftest.yml/badge.svg)](https://github.com/unauthdev/aicheck-scan/actions/workflows/selftest.yml)
 [![PyPI](https://img.shields.io/pypi/v/aicheck-scan)](https://pypi.org/project/aicheck-scan/)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-aicheck--scan-blue?logo=github)](https://github.com/marketplace/actions/aicheck-scan)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Fail the build if coding-agent credential files land in git.
@@ -32,12 +33,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: unauthdev/aicheck-scan/agents@main
+      - uses: unauthdev/aicheck-scan@v2
 ```
 
-Pin `@main` only if you accept floating. Prefer a commit SHA once you have
-one you trust. Optional inputs: `context` (Docker build context), `artifacts`,
-`fail-home`.
+Pin `@v2` for the floating major, or `@v2.0.0` for an exact release.
+Same gate also lives at `uses: unauthdev/aicheck-scan/agents@v2` (older
+snippets). Optional inputs: `context` (Docker build context), `artifacts`,
+`fail-home`. Maintainer notes: [`docs/marketplace.md`](docs/marketplace.md).
 
 ```bash
 pip install aicheck-scan
@@ -67,14 +69,11 @@ n8n, Ollama, …). It never fetches these files on a host you submit.
 
 ## Live-probe leftover
 
-The root Action `uses: unauthdev/aicheck-scan@v1` still live-probes a host
-you name (Ollama, n8n, vLLM, and the rest). That is the 1.2.x product. It is
-not the coding-agent gate. Keep it if you already depend on it. Marketplace
-listing: [aicheck-scan](https://github.com/marketplace/actions/aicheck-scan).
-Notes: [`docs/marketplace.md`](docs/marketplace.md).
+v2 moved live-probe off the root Action. `@v1` is frozen (still live-probe,
+stuck on 1.2.2). New installs that still want a host probe:
 
 ```yaml
-- uses: unauthdev/aicheck-scan@v1
+- uses: unauthdev/aicheck-scan/scan@v2
   with:
     target: localhost
     fail-grade: F
@@ -95,8 +94,8 @@ aicheck inventory --targets targets.yaml --state-dir ./state --allow-private --i
 Target examples under [`examples/`](examples/). Schema:
 [`docs/schemas/inventory-report-v1.md`](docs/schemas/inventory-report-v1.md).
 
-Docker: `docker run ghcr.io/unauthdev/aicheck:v1 …` (image tracks the live-probe
-CLI; `aicheck agents` is in the pip package from 1.3.0).
+Docker: `docker run ghcr.io/unauthdev/aicheck:v2 …` (1.3.0+ includes
+`aicheck agents`).
 
 ## Trust
 

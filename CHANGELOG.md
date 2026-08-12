@@ -2,7 +2,7 @@
 
 Notable changes per release. Full notes and SHA-256 sums: [GitHub releases](https://github.com/unauthdev/aicheck-scan/releases).
 
-## v2.0.0 — 2026-08-12
+## v2.0.0 - 2026-08-12
 
 Breaking for the GitHub Action only. The CLI is unchanged.
 
@@ -14,7 +14,7 @@ Breaking for the GitHub Action only. The CLI is unchanged.
 - `uses: unauthdev/aicheck-scan/agents@v2` is an alias of the root Action.
 - `@v1` is frozen leftover live-probe. Do not move that tag.
 
-## v1.3.0 — 2026-08-12
+## v1.3.0 - 2026-08-12
 
 - `aicheck agents`: local-only gate for coding-agent credential files from the
   [unauth.dev loot list](https://unauth.dev/loot). `--ci` fails on presence in
@@ -23,17 +23,17 @@ Breaking for the GitHub Action only. The CLI is unchanged.
 - Composite Action: `uses: unauthdev/aicheck-scan/agents@main`.
 - The root live-probe Action (`uses: unauthdev/aicheck-scan@v1`) is unchanged.
 
-## v1.2.5 — 2026-08-05
+## v1.2.5 - 2026-08-05
 
 - Passive discovery: `aicheck inventory --flow-logs` turns AWS VPC flow logs (or generic JSONL) into an attributed AI-service inventory with zero probing. `--verify` sweeps what it finds.
-- First Class B pack: `data-plane` — zero-byte TCP connect checks to Milvus :19530, Qdrant :6334, Weaviate :50051 (gated by `--deep --deep-packs data-plane --i-own-these-targets`).
+- First Class B pack: `data-plane` - zero-byte TCP connect checks to Milvus :19530, Qdrant :6334, Weaviate :50051 (gated by `--deep --deep-packs data-plane --i-own-these-targets`).
 - Public advisory dataset (`advisories.yaml`, CC-BY 4.0): exposure classes + curated CVEs with stable IDs.
 
-## v1.2.4 — 2026-08-05
+## v1.2.4 - 2026-08-05
 
 - Auth-state observations: findings (no-auth, graded), observations (auth-walled, INFO, never graded), unknown (partial coverage, surfaced).
 
-## v1.2.3 — 2026-08-04
+## v1.2.3 - 2026-08-04
 
 - Milvus + Attu checker (healthz Server-header fingerprint with version).
 - Structured CVE fields in findings (`details.cves[]`, version-gated); pre-release version parsing fixed.
@@ -45,24 +45,24 @@ Breaking for the GitHub Action only. The CLI is unchanged.
 - `--allow-private` now requires `--i-own-these-targets`.
 - Supply chain: SBOMs and build provenance on PyPI and Docker, digest-pinned base image, bounded dependency ranges, release-notes hashes, test gate before publish.
 
-## v1.2.2 — 2026-08-04
+## v1.2.2 - 2026-08-04
 
 - Inventory webhook, CIDR/CSV/JSONL target ingestion.
 
-## v1.2.1 — 2026-08-04
+## v1.2.1 - 2026-08-04
 
 - Class A/B probe gate for inventory `--deep`.
 
-## v1.2.0 — 2026-08-04
+## v1.2.0 - 2026-08-04
 
 - Local inventory mode and unified `aicheck` CLI (`scan` + `inventory`).
 
-## v1.1.x — 2026-08-01 → 2026-08-03
+## v1.1.x - 2026-08-01 → 2026-08-03
 
 - MCP checker set, agent-framework checkers (LangServe, CrewAI, Flowise, Dify, Langfuse), memory-risk finding class (Chroma/Qdrant/Weaviate/Redis consoles).
 - `--dry-run` and `--verbose` trust-surface flags, exit-code discipline (0/1/2).
 - Trusted PyPI publishing (OIDC), SLSA provenance, redaction pipeline, Marketplace listing.
 
-## v1.0.x — 2026-07-31
+## v1.0.x - 2026-07-31
 
 - First public releases: single-host live-probe scanner, grade A–F, SARIF, fix cards.

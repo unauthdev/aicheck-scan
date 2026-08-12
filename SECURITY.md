@@ -17,12 +17,13 @@ no separate security team or outsourced triage.
 
 ## supported versions
 
-only the latest 1.x release gets fixes. upgrade before reporting against an
+only the latest 2.x release gets fixes. upgrade before reporting against an
 older version.
 
 | version | supported |
 |---|---|
-| 1.x (latest) | yes |
+| 2.x (latest) | yes |
+| 1.x | no (frozen leftover live-probe Action) |
 | anything older | no |
 
 ## one ground rule

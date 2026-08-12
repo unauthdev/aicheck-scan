@@ -12,7 +12,7 @@ give us that window before disclosing publicly.
 ## who maintains this
 
 aicheck is built and maintained by one person: **Raúl Acedo**
-(https://unauth.dev/about). reports go to the maintainer directly — there is
+(https://unauth.dev/about). reports go to the maintainer directly. there is
 no separate security team or outsourced triage.
 
 ## supported versions
@@ -28,4 +28,4 @@ older version.
 
 ## one ground rule
 
-we will never ask for your credentials — aicheck needs none and sends nothing anywhere.
+we will never ask for your credentials. aicheck needs none and sends nothing anywhere.

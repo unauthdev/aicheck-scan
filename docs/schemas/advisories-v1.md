@@ -114,9 +114,9 @@ the honeypot before export).
 Each rendered record page carries a copy-able canonical citation line:
 
 ```
-unauth.dev advisory UNAUTH-2026-0007 — observed 2026-08 · CC-BY 4.0
+unauth.dev advisory UNAUTH-2026-0007: observed 2026-08 · CC-BY 4.0
 ```
 
-`observed <month>` appears when the record has `in_the_wild` telemetry
-(the telemetry month); otherwise the line reads `published <month>`.
+`observed <month>` appears when the record has `in_the_wild` counts
+(the month the honeypot last saw it); otherwise the line reads `published <month>`.
 The canonical URL is `https://unauth.dev/advisories/<id>`.

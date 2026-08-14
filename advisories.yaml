@@ -29,9 +29,9 @@ records:
   in_the_wild:
     service: ollama
     first_seen: '2026-07-28'
-    last_seen: '2026-08-11'
-    probes_30d: 1069
-    probes_observed: 1069
+    last_seen: '2026-08-14'
+    probes_30d: 1361
+    probes_observed: 1361
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0001
   published: '2026-08-05'
@@ -58,9 +58,9 @@ records:
   in_the_wild:
     service: n8n
     first_seen: '2026-07-28'
-    last_seen: '2026-08-11'
-    probes_30d: 643
-    probes_observed: 643
+    last_seen: '2026-08-14'
+    probes_30d: 829
+    probes_observed: 829
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0002
   published: '2026-08-05'
@@ -124,9 +124,9 @@ records:
   in_the_wild:
     service: langfuse
     first_seen: '2026-07-28'
-    last_seen: '2026-08-11'
-    probes_30d: 3497
-    probes_observed: 3497
+    last_seen: '2026-08-14'
+    probes_30d: 7640
+    probes_observed: 7640
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0005
   published: '2026-08-05'
@@ -197,9 +197,9 @@ records:
   in_the_wild:
     service: qdrant
     first_seen: '2026-08-03'
-    last_seen: '2026-08-11'
-    probes_30d: 64
-    probes_observed: 64
+    last_seen: '2026-08-14'
+    probes_30d: 208
+    probes_observed: 208
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0008
   published: '2026-08-05'
@@ -365,9 +365,9 @@ records:
   in_the_wild:
     service: gradio
     first_seen: '2026-08-02'
-    last_seen: '2026-08-11'
-    probes_30d: 24
-    probes_observed: 24
+    last_seen: '2026-08-13'
+    probes_30d: 35
+    probes_observed: 35
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0015
   published: '2026-08-05'
@@ -434,9 +434,9 @@ records:
   in_the_wild:
     service: chroma
     first_seen: '2026-08-03'
-    last_seen: '2026-08-11'
-    probes_30d: 622
-    probes_observed: 622
+    last_seen: '2026-08-14'
+    probes_30d: 844
+    probes_observed: 844
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0018
   published: '2026-08-05'
@@ -657,9 +657,9 @@ records:
   in_the_wild:
     service: mcp
     first_seen: '2026-08-02'
-    last_seen: '2026-08-11'
-    probes_30d: 651
-    probes_observed: 651
+    last_seen: '2026-08-14'
+    probes_30d: 846
+    probes_observed: 846
     source: unauth.dev botwatch honeypot
   id: UNAUTH-2026-0028
   published: '2026-08-05'

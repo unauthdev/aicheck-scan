@@ -1,7 +1,7 @@
 # Advisory dataset schema v1
 
-`aicheck/content/advisories.yaml` — the public unauth.dev advisory dataset
-("KEV for AI exposure"), also served as JSON at `GET /advisories.json` and
+`aicheck/content/advisories.yaml` — the public unauth.dev advisory notes,
+also served as JSON at `GET /advisories.json` and
 rendered record-by-record under `/advisories/<id>`. Mirrored to the public
 repo (`unauthdev/aicheck-scan`) by `scripts/action_sync.py` so it can be
 forked, diffed, and cited.

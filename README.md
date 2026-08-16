@@ -112,4 +112,4 @@ Full page: [`docs/trust.md`](docs/trust.md). Security reports: [SECURITY.md](SEC
 ## License
 
 MIT. Dataset on [unauth.dev/loot](https://unauth.dev/loot) is CC-BY 4.0.
-Advisory catalog: [`advisories.yaml`](advisories.yaml) / [unauth.dev/advisories](https://unauth.dev/advisories).
+Advisory notes: [`advisories.yaml`](advisories.yaml) / [unauth.dev/advisories](https://unauth.dev/advisories).

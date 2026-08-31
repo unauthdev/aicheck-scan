@@ -57,7 +57,7 @@ def test_findings_door_is_last_line() -> None:
     lines = out.rstrip("\n").splitlines()
     door = lines[-1]
     assert door.startswith(
-        "fix cards: https://unauth.dev/fixes/ollama-exposed — "), door
+        "fix cards: https://unauth.dev/fixes/ollama-exposed - "), door
     assert door.endswith(
         "see your stack the way the internet sees it: "
         "https://unauth.dev/demo?from=cli&grade=F&findings=2"

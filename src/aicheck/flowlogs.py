@@ -2,12 +2,12 @@
 
 Reads flow-log files (AWS VPC Flow Logs text, plain or .gz, or generic JSONL
 flow records) and attributes AI-service candidates to internal destination
-hosts — offline analysis only. This module never opens a socket: the only
+hosts - offline analysis only. This module never opens a socket: the only
 traffic involved was observed by someone else's flow collector.
 
 Design doc: docs/flow-logs.md. Honesty contract: every row this module
 produces is flow-attributed and content-unverified; generic web ports are
-never product-attributed (the design-partner lesson — Attu on :3000/:8000 is
+never product-attributed (the design-partner lesson - Attu on :3000/:8000 is
 indistinguishable from any other web app in flow data).
 """
 
@@ -25,7 +25,7 @@ from typing import Any, Iterator
 from .recon import DATA_PLANE_PORTS
 
 # Scanner-noise thresholds: internet scanners (Censys/Shodan-class) knock with
-# bare SYN probes of ~40-60B and at most a packet or two — no payload, no
+# bare SYN probes of ~40-60B and at most a packet or two - no payload, no
 # session. A flow under BOTH bounds is probe noise, not usage.
 NOISE_MAX_BYTES = 200
 NOISE_MAX_PACKETS = 2
@@ -47,25 +47,25 @@ SCANNER_NETWORKS_SEED: dict[str, tuple[str, ...]] = {
     ),
 }
 
-# Attribution tiers — the exact labels carried in report rows. Port evidence
+# Attribution tiers - the exact labels carried in report rows. Port evidence
 # alone makes a candidate; real sessions above the noise threshold corroborate.
 TIER_PORT_ATTRIBUTED = "port-attributed candidate"
 TIER_FLOW_CORROBORATED = "flow-shape corroborated"
 
 # Verification states (set by inventory: passive-only run vs merged sweep).
-VERIFICATION_NOT_PROBED = "unverified — host not probed"
+VERIFICATION_NOT_PROBED = "unverified - host not probed"
 VERIFICATION_CONFIRMED = "probe-verified"
-VERIFICATION_NOT_CONFIRMED = "unverified — probe did not confirm"
+VERIFICATION_NOT_CONFIRMED = "unverified - probe did not confirm"
 
 # Exact honesty strings (tests pin these; docs quote them).
 SCANNER_OBSERVATION = "already internet-scanned / likely in public indexes"
-ATTU_HINT = "possible Attu UI — verify with a probe"
+ATTU_HINT = "possible Attu UI - verify with a probe"
 
 # Ports where an ACCEPTED flow to the destination is meaningful product
 # evidence. Data-plane entries come from recon's Class B topology (single
-# source of truth — 19530/6334/50051); the rest are ports distinctive enough
+# source of truth - 19530/6334/50051); the rest are ports distinctive enough
 # that traffic implies the product. Generic web ports (80/443/3000/8000/8080)
-# are deliberately ABSENT — flow logs cannot attribute them.
+# are deliberately ABSENT - flow logs cannot attribute them.
 AI_PORTS: dict[int, tuple[str, str]] = {
     **{port: (product, "data-plane") for port, product in DATA_PLANE_PORTS.items()},
     9091: ("milvus", "management"),
@@ -85,7 +85,7 @@ AI_PORTS: dict[int, tuple[str, str]] = {
 
 # Tracked (accept counts only) to power the Attu hint: a host with BOTH a
 # Milvus flow-candidate (:9091 or :19530) AND web flows on Attu's UI ports
-# earns a hint — never a finding.
+# earns a hint - never a finding.
 ATTU_WEB_PORTS: tuple[int, ...] = (3000, 8000)
 ATTU_BACKEND_PORTS: tuple[int, ...] = (9091, 19530)
 
@@ -198,7 +198,7 @@ def _detect_format(line: str) -> str:
     parts = line.split()
     # AWS v2: version account-id interface-id srcaddr dstaddr srcport dstport
     # protocol packets bytes start end action log-status (later versions append
-    # fields — accept >= 14).
+    # fields - accept >= 14).
     if (
         len(parts) >= 14
         and parts[0].isdigit()
@@ -208,7 +208,7 @@ def _detect_format(line: str) -> str:
         return FMT_AWS
     raise FlowLogError(
         "unrecognized flow-log format: expected AWS VPC Flow Logs text "
-        "(space-separated v2+ fields) or generic JSONL flow records — "
+        "(space-separated v2+ fields) or generic JSONL flow records - "
         "see docs/flow-logs.md"
     )
 
@@ -277,7 +277,7 @@ def iter_flows(path: Path, stats: ParseStats) -> Iterator[Flow]:
     """Stream normalized flows from `path` (plain or .gz). The format is
     detected from the first non-blank line; anything else raises FlowLogError.
     Malformed lines are skipped (counted in stats.lines_malformed), never
-    fatal — flow logs are GBs and one bad line must not sink the run."""
+    fatal - flow logs are GBs and one bad line must not sink the run."""
     opener = gzip.open if str(path).endswith(".gz") else open
     fmt = ""
     with opener(path, "rt", encoding="utf-8", errors="replace") as fh:
@@ -330,7 +330,7 @@ def _evidence_text(accepts: int, byte_count: int, start: float | None, end: floa
         else "unknown"
     )
     return (
-        f"flow-attributed — content unverified "
+        f"flow-attributed - content unverified "
         f"({accepts} accepted flows, {byte_count / 1_000_000:.1f} MB, window {win})"
     )
 
@@ -388,7 +388,7 @@ def analyze(
                         TIER_FLOW_CORROBORATED if agg.real else TIER_PORT_ATTRIBUTED
                     ),
                     "title": (
-                        f"{_PRODUCT_DISPLAY.get(product, product)} candidate — "
+                        f"{_PRODUCT_DISPLAY.get(product, product)} candidate - "
                         f"port evidence ({role} :{port})"
                     ),
                     "accepted_flows": agg.accepts,
@@ -443,7 +443,7 @@ def analyze(
 
 def targets_to_jsonl(targets: list[dict[str, Any]]) -> str:
     """Discovered targets in targets JSONL v1 shape (docs/schemas/
-    targets-jsonl-v1.md) — round-trips through inventory_targets.load_targets."""
+    targets-jsonl-v1.md) - round-trips through inventory_targets.load_targets."""
     lines = [json.dumps({"host": str(t["host"])}, sort_keys=True) for t in targets]
     return "\n".join(lines) + ("\n" if lines else "")
 

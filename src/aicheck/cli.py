@@ -51,7 +51,7 @@ def main(argv: list[str] | None = None) -> int:
     if argv and argv[0] == "template":
         from .workflow_templates import main as template_main
         return template_main(argv[1:])
-    # Legacy: `aicheck <target> [flags]` — keep Action/docs working.
+    # Legacy: `aicheck <target> [flags]` - keep Action/docs working.
     from .scan import main as scan_main
     return scan_main(argv)
 

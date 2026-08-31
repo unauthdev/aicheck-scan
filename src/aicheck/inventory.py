@@ -61,7 +61,7 @@ def _merge_targets(
     discovered: list[dict[str, str | None]],
 ) -> list[dict[str, str | None]]:
     """Union of --targets and flow-discovered targets, deduped by normalized
-    host (loaded rows win — they may carry owner/env)."""
+    host (loaded rows win - they may carry owner/env)."""
     out = list(loaded)
     seen = {_norm_host(str(t["host"])) for t in out}
     for t in discovered:
@@ -117,7 +117,7 @@ def load_state(state_dir: Path) -> dict[str, Any]:
         except OSError:
             aside = path
         print(
-            f"state warning: {path} unreadable/incompatible ({exc}) — "
+            f"state warning: {path} unreadable/incompatible ({exc}) - "
             f"moved to {aside.name}; starting clean",
             file=sys.stderr,
         )
@@ -168,7 +168,7 @@ def acquire_lock(state_dir: Path, *, force: bool = False) -> Path:
         if fresh and not force:
             raise InventoryLockError(
                 f"another inventory run holds {path} "
-                f"(started {int(age_s or 0)}s ago) — wait for it to finish, "
+                f"(started {int(age_s or 0)}s ago) - wait for it to finish, "
                 "or pass --force to override"
             )
         try:
@@ -182,7 +182,7 @@ def acquire_lock(state_dir: Path, *, force: bool = False) -> Path:
         fd = os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
     except FileExistsError:
         raise InventoryLockError(
-            f"another inventory run just took {path} — "
+            f"another inventory run just took {path} - "
             "wait for it to finish, or pass --force to override"
         ) from None
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
@@ -271,7 +271,7 @@ async def scan_target(
             "observations": [],
         }
     except Exception as exc:
-        # One bad host must never kill the run — record and move on.
+        # One bad host must never kill the run - record and move on.
         return {
             **row_base,
             "status": "error",
@@ -282,7 +282,7 @@ async def scan_target(
             "observations": [],
         }
 
-    # A host that answered nothing is not "clean" — an A grade from zero
+    # A host that answered nothing is not "clean" - an A grade from zero
     # answered probes is a filtered/dead host, not an all-clear.
     status = "done" if coverage["probes_answered"] > 0 else "unreachable"
     enriched = [
@@ -318,7 +318,7 @@ async def _run_sweep(
 ) -> dict[str, Any]:
     started = utc_now()
     rid = run_id_from(started)
-    # run_id has second resolution — suffix on collision keeps it sortable
+    # run_id has second resolution - suffix on collision keeps it sortable
     # (timestamp prefix first) and unique per run file.
     if (state_dir / "runs" / f"{rid}.json").exists():
         rid = f"{rid}-{secrets.token_hex(2)}"
@@ -359,7 +359,7 @@ async def _run_sweep(
             })
 
     # Carry over prior findings for hosts not successfully probed this run
-    # (out of sweep, unreachable, rejected, error) — a dead host must not
+    # (out of sweep, unreachable, rejected, error) - a dead host must not
     # look like mass remediation.
     probed_hosts = {
         _norm_host(str(r["host"])) for r in results if r.get("status") == "done"
@@ -369,7 +369,7 @@ async def _run_sweep(
             current[fid] = dict(f)
 
     # Drift only among findings that belong to hosts successfully probed this
-    # run — unreachable/error hosts appear in neither `new` nor `fixed`.
+    # run - unreachable/error hosts appear in neither `new` nor `fixed`.
     prev_scoped = {
         fid: f
         for fid, f in previous.items()
@@ -453,7 +453,7 @@ async def run_inventory(
 def render_text(report: dict[str, Any]) -> str:
     d = report["drift"]
     lines = [
-        f"aicheck inventory — run {report['run_id']}",
+        f"aicheck inventory - run {report['run_id']}",
         f"  targets: {report['target_count']}  open findings: {report['finding_count']}",
         f"  drift: +{d['new_count']} new  -{d['fixed_count']} fixed  "
         f"~{d.get('changed_count', 0)} changed  ={d['still_open_count']} still open",
@@ -461,13 +461,13 @@ def render_text(report: dict[str, Any]) -> str:
     if report.get("services_filter"):
         lines.append(
             f"  note: services filter active ({', '.join(report['services_filter'])}) "
-            "— other products were not probed or graded"
+            "- other products were not probed or graded"
         )
     passive = report.get("passive")
     if passive:
         # Flow-attributed candidates: visibility from telemetry alone. Every
         # row stays content-unverified unless a --verify sweep confirmed it.
-        lines.append("PASSIVE DISCOVERY (flow-attributed — analysis of flow logs, no scan traffic):")
+        lines.append("PASSIVE DISCOVERY (flow-attributed - analysis of flow logs, no scan traffic):")
         lines.append(
             f"  source: {passive.get('source')} ({passive.get('format')}, "
             f"{passive.get('lines_total', 0)} lines, "
@@ -480,7 +480,7 @@ def render_text(report: dict[str, Any]) -> str:
             lines.append(f"  {host['host']}:")
             for row in host.get("rows") or []:
                 lines.append(
-                    f"    [{row['tier']}] {row['title']} — {row['verification']}"
+                    f"    [{row['tier']}] {row['title']} - {row['verification']}"
                 )
                 lines.append(f"      {row['evidence']}")
                 if row.get("scanner_observation"):
@@ -513,7 +513,7 @@ def render_text(report: dict[str, Any]) -> str:
         lines.append("FIXED:")
         for f in d["fixed"]:
             lines.append(
-                f"  [{f['finding_id']}] {f['product']} @ {f['host']} — {f['title']}"
+                f"  [{f['finding_id']}] {f['product']} @ {f['host']} - {f['title']}"
             )
         lines.append("")
     if d.get("changed"):
@@ -524,15 +524,15 @@ def render_text(report: dict[str, Any]) -> str:
                 for k, v in (f.get("changes") or {}).items()
             )
             lines.append(
-                f"  [{f['finding_id']}] {f['product']} @ {f['host']} — {bits}"
+                f"  [{f['finding_id']}] {f['product']} @ {f['host']} - {bits}"
             )
         lines.append("")
     if not d["new"] and not d["fixed"] and not d.get("changed"):
         if passive and not report.get("targets"):
             # Passive-only run: nothing was probed, so "clean" would be a lie.
-            lines.append("Passive-only run — no hosts probed, no findings produced.")
+            lines.append("Passive-only run - no hosts probed, no findings produced.")
         else:
-            lines.append("No drift since last run." if report["finding_count"] else "Clean — no exposed AI services found.")
+            lines.append("No drift since last run." if report["finding_count"] else "Clean - no exposed AI services found.")
         lines.append("")
     not_scanned = [
         t for t in report.get("targets") or [] if t.get("status") != "done"
@@ -540,7 +540,7 @@ def render_text(report: dict[str, Any]) -> str:
     if not_scanned:
         lines.append("TARGETS NOT SCANNED:")
         for t in not_scanned:
-            err = f" — {t['error']}" if t.get("error") else ""
+            err = f" - {t['error']}" if t.get("error") else ""
             lines.append(f"  {t['host']}: {t.get('status')}{err}")
         lines.append("")
     observed = [
@@ -554,7 +554,7 @@ def render_text(report: dict[str, Any]) -> str:
         lines.append("OBSERVED (auth-walled, not graded):")
         for host, obs in observed:
             products = ", ".join(sorted({o.get("product", "?") for o in obs}))
-            lines.append(f"  {host}: {len(obs)} observed — {products}")
+            lines.append(f"  {host}: {len(obs)} observed - {products}")
         lines.append("")
     mode = report.get("probe_mode") or {}
     lines.append(
@@ -585,7 +585,7 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help=(
             "passive discovery: AWS VPC Flow Logs (text, plain or .gz) or "
-            "generic JSONL flow records. Offline analysis only — no traffic "
+            "generic JSONL flow records. Offline analysis only - no traffic "
             "is sent unless --verify is added. See docs/flow-logs.md."
         ),
     )
@@ -695,7 +695,7 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help=(
             "allow webhook URLs resolving to loopback/link-local "
-            "(169.254.0.0/16, cloud metadata) — blocked by default"
+            "(169.254.0.0/16, cloud metadata) - blocked by default"
         ),
     )
     ap.add_argument(
@@ -715,7 +715,7 @@ def main(argv: list[str] | None = None) -> int:
         "--deep-packs",
         default="",
         help=(
-            "comma-separated Class B packs (available: data-plane — zero-byte "
+            "comma-separated Class B packs (available: data-plane - zero-byte "
             "TCP connects to vector-store data-plane ports)"
         ),
     )

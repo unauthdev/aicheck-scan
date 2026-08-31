@@ -2,7 +2,7 @@
 
 CI-shaped wrapper over the live-probe pipeline (recon → checkers → grade).
 Answers one question in a build job: "did we just ship an AI service with no
-auth?" Runs entirely against the given target — no database, no emails, zero
+auth?" Runs entirely against the given target - no database, no emails, zero
 network calls beyond the target by default. An optional weekly PyPI update
 check exists but stays off unless explicitly enabled (--version-check or
 AICHECK_VERSION_CHECK=1; inventory mode never performs it).
@@ -12,7 +12,7 @@ AICHECK_VERSION_CHECK=1; inventory mode never performs it).
 
 Trust-surface flags:
   --dry-run   print every request the scan would send (sorted, one per line)
-              and exit 0 — no sockets, no DNS, works for any target string.
+              and exit 0 - no sockets, no DNS, works for any target string.
   --verbose   log every outbound connection to stderr as it happens, with the
               pinned IP actually dialed, plus a closing summary line.
 
@@ -59,7 +59,7 @@ def resolve_internal(raw: str) -> tuple[str, list[str]]:
     ips = sorted({info[4][0] for info in infos})
     if not ips:
         raise ssrf.TargetRejected(f"could not resolve {host!r}")
-    # Prefer IPv4 — unbracketed IPv6 URLs break httpx; dual-stack docker
+    # Prefer IPv4 - unbracketed IPv6 URLs break httpx; dual-stack docker
     # names often return AAAA first under sorted(str).
     v4 = [s for s in ips
           if isinstance(ipaddress.ip_address(s), ipaddress.IPv4Address)]
@@ -81,11 +81,11 @@ async def scan(target: str, allow_private: bool = False,
                probe_mode: ProbeMode | None = None) -> tuple[str, list[dict], list[dict], dict]:
     """Returns (grade, findings, observations, coverage). Raises
     ssrf.TargetRejected on bad targets. coverage (recon.coverage_stats) tells
-    the caller how much of the probe plan was answered — a dead/filtered host
+    the caller how much of the probe plan was answered - a dead/filtered host
     grades A on partial facts. observations are fingerprinted-but-auth-walled
     services (severity INFO): reported, never graded. `log`, when given,
     receives (method, logical_url, dialed_address) before every outbound
-    request — the --verbose connection log.
+    request - the --verbose connection log.
 
     `probe_mode` is the resolved Class A/B gate (probe_class.resolve_probe_
     mode). Only when it carries the "data-plane" pack does the scan also send
@@ -122,7 +122,7 @@ def _door_line(g: str, findings: list[dict]) -> str:
         return CLEAN_DOOR
     try:
         from .render import deep_link
-        return (f"fix cards: https://unauth.dev/fixes/{findings[0]['fix_card_id']} — "
+        return (f"fix cards: https://unauth.dev/fixes/{findings[0]['fix_card_id']} - "
                 f"see your stack the way the internet sees it: "
                 f"{deep_link(g, findings, source='cli')}")
     except ImportError:
@@ -133,10 +133,10 @@ def render_text(target: str, g: str, findings: list[dict],
                 services_filter: list[str] | None = None,
                 coverage: dict | None = None,
                 observations: list[dict] | None = None) -> str:
-    lines = [f"aicheck — {target} → grade {g} ({len(findings)} findings)"]
+    lines = [f"aicheck - {target} → grade {g} ({len(findings)} findings)"]
     if coverage and coverage.get("partial"):
         lines.append(
-            f"note: partial scan — {coverage['probes_answered']}/{coverage['probes_total']} "
+            f"note: partial scan - {coverage['probes_answered']}/{coverage['probes_total']} "
             "probes answered (host may be filtered)"
         )
     for f in findings:
@@ -149,15 +149,15 @@ def render_text(target: str, g: str, findings: list[dict],
         if services_filter:
             lines.append(
                 f"  no findings in filtered services ({', '.join(services_filter)}) "
-                "— other products were not graded"
+                "- other products were not graded"
             )
         else:
-            lines.append("  clean — no exposed AI services found")
+            lines.append("  clean - no exposed AI services found")
     if observations:
         # Structurally separate channel: fingerprinted-but-auth-walled services
         # are reported for visibility and NEVER graded.
         lines.append(
-            f"  observed (auth-walled): {len(observations)} services — "
+            f"  observed (auth-walled): {len(observations)} services - "
             "present but not graded"
         )
         for o in observations:
@@ -170,24 +170,24 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         prog="aicheck scan",
         description="Live-probe a target for exposed self-hosted AI services.")
-    ap.add_argument("target", help="host to probe (no port — we probe the well-known ones)")
+    ap.add_argument("target", help="host to probe (no port - we probe the well-known ones)")
     ap.add_argument("--format", choices=["text", "json", "sarif"], default="text")
     ap.add_argument("--fail-grade", choices=["A", "C", "D", "F"], default="F",
                     help="exit 1 if the grade is this or worse (default: F)")
     ap.add_argument("--services", default="",
                     help="comma-separated product filter, e.g. ollama,n8n")
     ap.add_argument("--allow-private", action="store_true",
-                    help="allow internal targets (localhost, docker service names) — "
+                    help="allow internal targets (localhost, docker service names) - "
                          "for CI jobs probing their own services")
     ap.add_argument("--dry-run", action="store_true",
-                    help="print every request the scan would send and exit — "
+                    help="print every request the scan would send and exit - "
                          "no sockets, no DNS")
     ap.add_argument("--verbose", action="store_true",
                     help="log every outbound connection (with the pinned IP dialed) "
                          "to stderr as it happens")
     ap.add_argument("--version-check", action="store_true",
                     help="opt in to a weekly PyPI update check after results "
-                         "print (also: AICHECK_VERSION_CHECK=1) — off by default")
+                         "print (also: AICHECK_VERSION_CHECK=1) - off by default")
     ap.add_argument("--no-version-check", action="store_true",
                     help="deprecated no-op kept for backcompat: the update "
                          "check is opt-in since it flipped from opt-out; this "
@@ -199,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="required with --deep: you authorize probing this "
                          "target beyond Class A")
     ap.add_argument("--deep-packs", default="",
-                    help="comma-separated Class B packs (available: data-plane — "
+                    help="comma-separated Class B packs (available: data-plane - "
                          "zero-byte TCP connects to vector-store data-plane ports)")
     ap.add_argument("--version", action="version",
                     version=f"%(prog)s {__version__}")
@@ -229,7 +229,7 @@ def main(argv: list[str] | None = None) -> int:
                 for port in recon.connect_plan()
             ]
             print(f"# plus these {len(connects)} zero-byte TCP connects "
-                  "(Class B data-plane pack — connect-and-close, nothing sent):")
+                  "(Class B data-plane pack - connect-and-close, nothing sent):")
             print("\n".join(connects))
         return 0
 
@@ -248,7 +248,7 @@ def main(argv: list[str] | None = None) -> int:
     except ssrf.TargetRejected as exc:
         print(f"target rejected: {exc}", file=sys.stderr)
         return 2
-    except Exception as exc:  # engine error — never report as a grade
+    except Exception as exc:  # engine error - never report as a grade
         print(f"aicheck engine error: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
 

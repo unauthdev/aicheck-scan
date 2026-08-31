@@ -2,7 +2,7 @@
 
 IDs are deterministic across runs so drift (new / fixed / still_open) works
 without a central server. Enrichment surfaces version, CVE, and risk-class
-fields already produced by checkers — it does not change severity or grade.
+fields already produced by checkers - it does not change severity or grade.
 """
 
 from __future__ import annotations
@@ -45,11 +45,11 @@ def enrich_finding(
         cves.append(str(worst).upper())
 
     if str(finding.get("check_id") or "").endswith("-dataplane"):
-        # Class B data-plane pack finding — a GET-only claim would be false.
+        # Class B data-plane pack finding - a GET-only claim would be false.
         how = (
             "Class B data-plane pack: zero-byte TCP connect accepted "
             "(connect-and-close, 0 bytes sent), conjoined with the Class A "
-            "HTTP fingerprint on the same host. Reachability only — no auth "
+            "HTTP fingerprint on the same host. Reachability only - no auth "
             "attempt, no protocol bytes, no data read."
         )
     else:
@@ -78,7 +78,7 @@ def enrich_finding(
     version = details.get("version") or None
     fix_url = f"https://unauth.dev/fixes/{fix_card}" if fix_card else None
 
-    # Ticket / SIEM description — one prose block teams map in workflows.
+    # Ticket / SIEM description - one prose block teams map in workflows.
     description_parts = [
         str(title or ""),
         f"Asset: {host}",
@@ -95,7 +95,7 @@ def enrich_finding(
     if fix_url:
         description_parts.append(f"Remediation: {fix_url}")
 
-    # Canonical field names (schema v1): finding_id, host, env. No aliases —
+    # Canonical field names (schema v1): finding_id, host, env. No aliases -
     # additive-only within v1, renames bump schema_version.
     out: dict[str, Any] = {
         "finding_id": fid,

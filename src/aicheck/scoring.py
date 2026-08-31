@@ -1,10 +1,10 @@
 """Scoring: checker orchestration + grading. Pure and dependency-free (no DB,
-no notify) — this module is the shareable core of the engine.
+no notify) - this module is the shareable core of the engine.
 
 Severity model (SPEC): CRITICAL = unauth write/exec, HIGH = unauth read,
 MEDIUM = version/info leak. Grade: any CRITICAL → F, any HIGH → D,
 any MEDIUM → C, clean → A. INFO is the non-grading observation level
-(auth-walled-but-fingerprinted) — run_checkers returns those on a separate
+(auth-walled-but-fingerprinted) - run_checkers returns those on a separate
 channel and grade() ignores them even if handed one directly.
 """
 
@@ -48,7 +48,7 @@ def run_checkers(
 
     `connects` is the Class B data-plane pack's {port: "accepted"|...} map
     from recon.gather_connects. None means Class A: no checker sees connect
-    results and no data-plane finding can be emitted — the hosted scanner
+    results and no data-plane finding can be emitted - the hosted scanner
     (engine.run_scan) always runs this way."""
     findings: list[Finding] = []
     observations: list[Finding] = []
@@ -61,7 +61,7 @@ def run_checkers(
             for f in emitted:
                 (observations if f.severity == "INFO" else findings).append(f)
         except Exception as exc:
-            # One broken checker must never kill a scan — but it must not be
+            # One broken checker must never kill a scan - but it must not be
             # invisible either: a silently dead checker reads as "clean".
             log.warning(
                 "checker %s failed: %s: %s",
@@ -69,7 +69,7 @@ def run_checkers(
                 type(exc).__name__, exc,
             )
             continue
-    # Annotation only — never touches severity / grade inputs. Observations
+    # Annotation only - never touches severity / grade inputs. Observations
     # are deliberately not annotated (no version was disclosed by the wall).
     from .checks.vuln_lookup import annotate_known_cves
     try:

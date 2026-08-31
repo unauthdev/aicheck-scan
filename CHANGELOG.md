@@ -2,6 +2,10 @@
 
 Notable changes per release. Full notes and SHA-256 sums: [GitHub releases](https://github.com/unauthdev/aicheck-scan/releases).
 
+## v2.0.1 - 2026-08-31
+
+- Package author metadata is `unauth.dev` (`security@unauth.dev`). PyPI no longer carries a personal name.
+
 ## v2.0.0 - 2026-08-12
 
 Breaking for the GitHub Action only. The CLI is unchanged.

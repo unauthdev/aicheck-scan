@@ -2,8 +2,8 @@
 
 Only public, globally-reachable unicast IPv4 targets may be scanned. The
 guard is an ALLOWLIST on `is_global` (not a blocklist of known-bad flags):
-anything not allocated for public routing — private, loopback, link-local,
-CGNAT (100.64.0.0/10), documentation ranges, benchmarking, reserved — is
+anything not allocated for public routing - private, loopback, link-local,
+CGNAT (100.64.0.0/10), documentation ranges, benchmarking, reserved - is
 rejected, both as literal IPs and as the result of DNS resolution.
 """
 
@@ -25,7 +25,7 @@ _HOST_RE = re.compile(r"^[a-z0-9]([a-z0-9.-]{0,251}[a-z0-9])?$")
 _BLOCKED_NETWORKS = tuple(
     ipaddress.ip_network(n)
     for n in (
-        "100.64.0.0/10",  # CGNAT shared address space (RFC 6598) — Tailscale etc.
+        "100.64.0.0/10",  # CGNAT shared address space (RFC 6598) - Tailscale etc.
         "192.0.0.0/24",   # IETF protocol assignments
         "198.18.0.0/15",  # benchmarking (RFC 2544)
     )
@@ -37,7 +37,7 @@ def normalize_target(raw: str) -> str:
     t = (raw or "").strip().lower()
     if not t:
         raise TargetRejected("empty target")
-    if t.startswith("curl "):  # pasted the whole example command — extract the target
+    if t.startswith("curl "):  # pasted the whole example command - extract the target
         m = re.search(r"(?:-d\s*|--data(?:-raw)?\s*)target=([^\s&]+)", t)
         if m:
             t = m.group(1)
@@ -89,13 +89,13 @@ def ensure_public(host: str) -> list[str]:
             or any(ip in net for net in _BLOCKED_NETWORKS)
         ):
             raise TargetRejected(
-                f"{host!r} resolves to a non-public address ({s}) — "
+                f"{host!r} resolves to a non-public address ({s}) - "
                 "only public targets you own may be scanned"
             )
         v4.append(s)
     if not v4:
         raise TargetRejected(
-            f"{host!r} resolves only to IPv6 — IPv6 targets are not supported yet"
+            f"{host!r} resolves only to IPv6 - IPv6 targets are not supported yet"
         )
     return sorted(v4)
 

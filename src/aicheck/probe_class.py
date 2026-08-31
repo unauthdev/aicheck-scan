@@ -1,13 +1,13 @@
 """Probe classes: what traffic aicheck is allowed to send.
 
-Class A (default) — GET-only metadata probes. Safe for CI, hosted scanner
+Class A (default) - GET-only metadata probes. Safe for CI, hosted scanner
 doctrine, and air-gapped inventory. Near-zero false positives.
 
-Class B (--deep) — reserved for customer-run estate checks that may go beyond
+Class B (--deep) - reserved for customer-run estate checks that may go beyond
 GET-only (authenticated headers, limited POSTs, future runtime packs).
 Requires an explicit ownership acknowledgement.
 
-Packs shipped: "data-plane" — zero-byte TCP connect-and-close to the Milvus /
+Packs shipped: "data-plane" - zero-byte TCP connect-and-close to the Milvus /
 Qdrant / Weaviate data-plane ports (reachability only; see
 docs/deep-pack-data-plane.md and docs/PROBES.md).
 
@@ -25,7 +25,7 @@ CLASS_A = "A"
 CLASS_B = "B"
 
 # Opt-in deep packs. "data-plane": TCP connect (0 bytes) to vector-store data
-# planes — the first Class B pack (docs/deep-pack-data-plane.md).
+# planes - the first Class B pack (docs/deep-pack-data-plane.md).
 DEEP_PACKS_AVAILABLE: tuple[str, ...] = ("data-plane",)
 
 
@@ -59,11 +59,11 @@ class ProbeMode:
                 else (
                     "Class B with data-plane pack: GET probes plus zero-byte "
                     "TCP connect-and-close to vector-store data-plane ports "
-                    "(reachability only — no bytes sent, no auth attempted)."
+                    "(reachability only - no bytes sent, no auth attempted)."
                     if data_plane
                     else (
                         "Class B acknowledged; no deep packs are enabled in this "
-                        "build — behavior matches Class A until packs ship."
+                        "build - behavior matches Class A until packs ship."
                     )
                 )
             ),

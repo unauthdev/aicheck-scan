@@ -47,7 +47,7 @@ PROBES: list[tuple[int, str]] = [
     (3000, "/server_info"),
     (8080, "/server_info"),
     (8000, "/version"),
-    # Langfuse (shares :3000 — fingerprint by content, never by port alone)
+    # Langfuse (shares :3000 - fingerprint by content, never by port alone)
     (3000, "/"),
     (3000, "/api/public/health"),
     (3000, "/auth/sign-up"),
@@ -60,16 +60,16 @@ PROBES: list[tuple[int, str]] = [
     (8265, "/api/version"),
     (8265, "/api/jobs/"),
     (8265, "/nodes"),
-    # Dify (web :80/:3000, api :5001 — fingerprint by content)
+    # Dify (web :80/:3000, api :5001 - fingerprint by content)
     (80, "/signin"),
     (5001, "/console/api/setup"),
-    # Attu (Milvus UI) can answer the :80 root — content fingerprint only
+    # Attu (Milvus UI) can answer the :80 root - content fingerprint only
     # (requires BOTH "attu" and "milvus" in the body, never port alone)
     (80, "/"),
     # Qdrant
     (6333, "/"),
     (6333, "/collections"),
-    # Milvus (healthz :9091 — Server: Milvus/<version> header fingerprints)
+    # Milvus (healthz :9091 - Server: Milvus/<version> header fingerprints)
     (9091, "/healthz"),
     (9091, "/"),
     # AnythingLLM
@@ -79,26 +79,26 @@ PROBES: list[tuple[int, str]] = [
     (8888, "/"),
     (8888, "/api/status"),
     (8888, "/api/kernels"),
-    # Gradio / Langflow (share :7860 — content fingerprint decides)
+    # Gradio / Langflow (share :7860 - content fingerprint decides)
     (7860, "/"),
     (7860, "/config"),
     (7860, "/api/v1/version"),
     (7860, "/health"),
-    # Flowise (shares :3000 — content decides; public-chatflows is auth-whitelisted)
+    # Flowise (shares :3000 - content decides; public-chatflows is auth-whitelisted)
     (3000, "/api/v1/ping"),
     (3000, "/api/v1/version"),
     (3000, "/api/v1/public-chatflows"),
-    # Chroma (shares :8000 with vLLM — content decides)
+    # Chroma (shares :8000 with vLLM - content decides)
     (8000, "/api/v1/heartbeat"),
     (8000, "/api/v2/heartbeat"),
     (8000, "/api/v1/collections"),
     (8000, "/api/v2/collections"),
     (8000, "/api/v2/version"),
     (8000, "/api/v1/version"),
-    # LangServe (shares :8000/:8080 — content decides via openapi/docs)
+    # LangServe (shares :8000/:8080 - content decides via openapi/docs)
     (8000, "/openapi.json"), (8000, "/docs"),
     (8080, "/openapi.json"), (8080, "/docs"),
-    # AutoGen Studio (shares :8000/:8080 — content: "AutoGen Studio API")
+    # AutoGen Studio (shares :8000/:8080 - content: "AutoGen Studio API")
     (8000, "/api/version"), (8000, "/api/health"),
     (8080, "/api/version"), (8080, "/api/health"),
     (8081, "/api/version"), (8081, "/api/health"),
@@ -108,21 +108,21 @@ PROBES: list[tuple[int, str]] = [
     # OpenClaw / Clawdbot gateway (default :18789)
     (18789, "/"), (18789, "/__openclaw/control-ui-config.json"),
     (8080, "/__openclaw/control-ui-config.json"),
-    # Weaviate (shares :8080 with Open WebUI — content decides)
+    # Weaviate (shares :8080 with Open WebUI - content decides)
     (8080, "/v1/meta"),
     (8080, "/v1/schema"),
     # RedisInsight (default :5540, older :8001) + Redis Commander (:8081)
-    # — HTTP consoles only; raw Redis RESP :6379 is out of scope
+    # - HTTP consoles only; raw Redis RESP :6379 is out of scope
     (5540, "/"), (5540, "/api/health"), (5540, "/api/health/"), (5540, "/api/databases"),
     (8001, "/"), (8001, "/api/health"), (8001, "/api/health/"), (8001, "/api/databases"),
     (8081, "/"), (8082, "/"),
-    # MCP servers (no standard port — probe the common ones + 443 via alias)
+    # MCP servers (no standard port - probe the common ones + 443 via alias)
     (3000, "/sse"), (3000, "/mcp/sse"), (3000, "/mcp"), (3000, "/mcp/"),
     (3001, "/sse"), (3001, "/mcp/sse"), (3001, "/mcp"),
     (5000, "/sse"), (5000, "/mcp/sse"), (5000, "/mcp"),
     (8000, "/sse"), (8000, "/mcp/sse"), (8000, "/mcp"),
     (8080, "/sse"), (8080, "/mcp/sse"), (8080, "/mcp"), (8080, "/mcp/"),
-    # MCP discovery (SEP / IETF-style well-known cards — GET only)
+    # MCP discovery (SEP / IETF-style well-known cards - GET only)
     (3000, "/.well-known/mcp"), (3000, "/.well-known/mcp.json"),
     (3000, "/.well-known/mcp/server-card.json"), (3000, "/.well-known/mcp-server"),
     (3001, "/.well-known/mcp"), (3001, "/.well-known/mcp.json"),
@@ -152,7 +152,7 @@ def fact_key(port: int, path: str) -> str:
 def coverage_stats(facts: dict[str, ProbeResult]) -> dict:
     """Scan-coverage summary: how much of the probe plan actually got an HTTP
     answer. partial=True means at least one probe errored (filtered host,
-    budget exhaustion, blocked redirect) — an 'A' grade from partial facts is
+    budget exhaustion, blocked redirect) - an 'A' grade from partial facts is
     not proof of clean, and callers must be able to tell the difference."""
     return {
         "probes_total": len(facts),
@@ -170,11 +170,11 @@ def probe_plan() -> list[tuple[int, str]]:
 
 
 # Class B "data-plane" pack topology: vector-store data-plane port -> product.
-# Deliberately no Redis :6379 (raw RESP stays out of scope — see
+# Deliberately no Redis :6379 (raw RESP stays out of scope - see
 # docs/deep-pack-data-plane.md "Hard boundaries").
 DATA_PLANE_PORTS: dict[int, str] = {19530: "milvus", 6334: "qdrant", 50051: "weaviate"}
 
-# One connect per port per scan, short timeout, small overall budget — no
+# One connect per port per scan, short timeout, small overall budget - no
 # retry storms (pack doctrine).
 CONNECT_TIMEOUT_S = 2.0
 CONNECT_BUDGET_S = 10
@@ -197,7 +197,7 @@ async def _connect(
     (port, "accepted"|"refused"|"timeout"). Like _probe, each validated
     pinned IP is tried in turn (never a fresh DNS answer); an explicit RST is
     "refused", every other connect failure (black-hole, unreachable) counts as
-    "timeout" — no answer is no answer. Nothing is ever written to the socket."""
+    "timeout" - no answer is no answer. Nothing is ever written to the socket."""
     async with sem:
         outcome = "timeout"
         for ip in (pinned_ips or [None]):
@@ -217,7 +217,7 @@ async def _connect(
             except ConnectionRefusedError:
                 outcome = "refused"
             except (TimeoutError, OSError):
-                pass  # timeout / unreachable / DNS — try the next pinned IP
+                pass  # timeout / unreachable / DNS - try the next pinned IP
         return port, outcome
 
 
@@ -229,14 +229,14 @@ async def gather_connects(
 ) -> dict[int, str]:
     """Class B data-plane pack: zero-byte TCP connect-and-close per port,
     bounded by CONNECT_BUDGET_S. Returns {port: "accepted"|"refused"|"timeout"}.
-    Reachability only — no protocol bytes, no TLS detection, no banner reads.
+    Reachability only - no protocol bytes, no TLS detection, no banner reads.
     Runs ONLY when the customer opted in (--deep --deep-packs data-plane
     --i-own-these-targets); the hosted scanner never calls this.
 
     Same safety contract as gather_facts: pinned_ips are the ssrf-validated
     addresses and every connect dials those (never a fresh DNS answer). `log`,
     when given, is called as log("CONNECT", logical_url, dialed_address)
-    before every attempt — the --verbose connection log."""
+    before every attempt - the --verbose connection log."""
     sem = asyncio.Semaphore(CONCURRENCY)
     tasks = {
         asyncio.ensure_future(_connect(sem, host, p, pinned_ips, log)): p
@@ -287,7 +287,7 @@ async def _fetch(
     """One probe, following up to 3 redirects. Anti-rebinding/proxy rules:
     redirects are only followed when they stay on the SAME host as the
     validated target (any scheme/port), and when pinned IPs are given the
-    connection always goes to those IPs — never to a fresh DNS answer. A
+    connection always goes to those IPs - never to a fresh DNS answer. A
     cross-host redirect would turn this scanner into an open GET proxy."""
     from urllib.parse import urljoin, urlparse
 
@@ -354,7 +354,7 @@ async def _probe(
                 last_exc = exc
             except httpx.InvalidURL as exc:
                 # Unbracketed IPv6 (or other bad URL) must not silently drop
-                # the probe task — try the next pinned address.
+                # the probe task - try the next pinned address.
                 last_exc = exc
             except httpx.HTTPError as exc:
                 return key, ProbeResult(url=start_url, status_code=None, error=type(exc).__name__)
@@ -371,14 +371,14 @@ async def gather_facts(
 ) -> dict[str, ProbeResult]:
     """Run all candidate probes concurrently, bounded by GATHER_BUDGET_S.
     On budget expiry, unfinished probes are recorded as absent and we return
-    partial facts — the scan always completes.
+    partial facts - the scan always completes.
 
     `pinned_ips` are the addresses validated by ssrf.validate_target; when
     given, every connection dials those IPs (never a fresh DNS answer), so a
     rebind between validation and connect goes nowhere.
 
     `log`, when given, is called as log(method, logical_url, dialed_address)
-    just before every outbound request — the --verbose connection log."""
+    just before every outbound request - the --verbose connection log."""
     sem = asyncio.Semaphore(CONCURRENCY)
     async with httpx.AsyncClient(
         transport=transport,

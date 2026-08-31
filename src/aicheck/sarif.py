@@ -2,12 +2,12 @@
 
 One rule per check_id; one result per finding. Severity maps to SARIF levels:
 CRITICAL → error, HIGH → warning, MEDIUM → note. Every rule links the fix
-card (helpUri) — the annotation in the PR points straight at the remediation
+card (helpUri) - the annotation in the PR points straight at the remediation
 guidance on unauth.dev. GitHub code scanning consumes this via
 github/codeql-action/upload-sarif.
 
 Observations (fingerprinted-but-auth-walled, severity INFO) map to note-level
-results under a separate `<check_id>-observed` rule id — visible in the code
+results under a separate `<check_id>-observed` rule id - visible in the code
 scanning UI, but structurally distinct from exposure rules and never at a
 level that gates a build.
 """
@@ -35,7 +35,7 @@ def to_sarif(target: str, grade: str, findings: list[dict], version: str = "0.1.
             }
     results = []
     for f in findings:
-        msg = f"{f['severity']}: {f['title']} — {f.get('evidence', '')}".strip(" —")
+        msg = f"{f['severity']}: {f['title']} - {f.get('evidence', '')}".strip(" -")
         results.append({
             "ruleId": f["check_id"],
             "level": LEVEL.get(f["severity"], "note"),
@@ -60,7 +60,7 @@ def to_sarif(target: str, grade: str, findings: list[dict], version: str = "0.1.
                 "properties": {"severity": "INFO", "product": o["product"],
                                "auth": "present"},
             }
-        msg = f"INFO: {o['title']} — {o.get('evidence', '')}".strip(" —")
+        msg = f"INFO: {o['title']} - {o.get('evidence', '')}".strip(" -")
         results.append({
             "ruleId": rid,
             "level": "note",

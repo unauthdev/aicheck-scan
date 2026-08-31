@@ -1,7 +1,7 @@
-"""Workflow-template security scanner — static analysis of FILES, zero probing.
+"""Workflow-template security scanner - static analysis of FILES, zero probing.
 
 Analyzes AI workflow templates (n8n, Dify, Flowise) for embedded credentials,
-exfil-shaped flows, and dangerous nodes. Deterministic rules only — no LLM,
+exfil-shaped flows, and dangerous nodes. Deterministic rules only - no LLM,
 and no network traffic beyond optionally fetching the template file itself
 from an https URL. The same engine feeds marketplaces, CI jobs, and end
 users: anything that can hand us template text gets the same verdict.
@@ -16,7 +16,7 @@ Detection is by shape, never by file extension:
   Flowise JSON: flowData (a JSON string or object) with nodes[]
 
 Exit codes (same discipline as scan.py): 0 = no CRITICAL/HIGH finding,
-1 = CRITICAL or HIGH present, 2 = fetch/parse/usage error — an unreadable
+1 = CRITICAL or HIGH present, 2 = fetch/parse/usage error - an unreadable
 template is never reported as a clean one.
 """
 
@@ -36,12 +36,12 @@ import yaml
 
 from .models import Finding
 
-MAX_INPUT_BYTES = 1_000_000  # 1 MB — templates are small; bigger input is a mistake or an attack
+MAX_INPUT_BYTES = 1_000_000  # 1 MB - templates are small; bigger input is a mistake or an attack
 FETCH_TIMEOUT = 10.0
 _REDIRECT_STATUSES = {301, 302, 303, 307, 308}
 
 # Seed allowlist of well-known SaaS hosts that templates legitimately call.
-# Deliberately small — flag-expandable as false positives are reviewed.
+# Deliberately small - flag-expandable as false positives are reviewed.
 KNOWN_SAAS_HOSTS = (
     "openai.com",
     "anthropic.com",
@@ -62,7 +62,7 @@ _N8N_FIRST_PARTY_PREFIXES = (
 # code on the host running the workflow.
 _DANGEROUS_SUFFIXES = {"executecommand", "ssh", "shell", "code"}
 
-# Node-type suffixes that read data out of a store or file — one half of the
+# Node-type suffixes that read data out of a store or file - one half of the
 # exfil shape.
 _DATA_READ_SUFFIXES = {
     "googlesheets", "googledocs", "postgres", "mysql", "mariadb",
@@ -150,7 +150,7 @@ def parse_template(text: str, source: str = "") -> ParsedTemplate:
     matches."""
     if len(text.encode("utf-8", "replace")) > MAX_INPUT_BYTES:
         raise TemplateParseError(
-            f"input exceeds the {MAX_INPUT_BYTES}-byte cap — refusing to parse")
+            f"input exceeds the {MAX_INPUT_BYTES}-byte cap - refusing to parse")
     try:
         data = json.loads(text)
     except ValueError as json_err:
@@ -170,7 +170,7 @@ def parse_template(text: str, source: str = "") -> ParsedTemplate:
             return _parse_dify(data, source)
     tried = "; ".join(_SHAPE_HINTS)
     raise TemplateParseError(
-        f"input parses but matches no known workflow-template shape — "
+        f"input parses but matches no known workflow-template shape - "
         f"tried: {tried}")
 
 
@@ -220,7 +220,7 @@ def _parse_flowise(data: dict, source: str) -> ParsedTemplate:
             raise TemplateParseError(f"Flowise flowData is not valid JSON ({exc})")
     if not isinstance(fd, dict) or not isinstance(fd.get("nodes"), list):
         raise TemplateParseError(
-            "Flowise flowData has no nodes[] — expected a flowData object or "
+            "Flowise flowData has no nodes[] - expected a flowData object or "
             "JSON string with nodes[]")
     nodes = []
     for n in fd["nodes"]:
@@ -304,7 +304,7 @@ def _outbound_urls(node: TplNode) -> list[str]:
 
 def _url_hosts(urls: list[str]):
     """Yield (url, host, class) for URLs whose host can be determined.
-    Expression URLs ({{…}}) are skipped — the host is unknowable statically."""
+    Expression URLs ({{…}}) are skipped - the host is unknowable statically."""
     for u in urls:
         try:
             host = urlsplit(u).hostname
@@ -339,7 +339,7 @@ def rule_embedded_secrets(tpl: ParsedTemplate) -> list[Finding]:
                         tpl, "template-embedded-secrets", "CRITICAL",
                         f"embedded secret in {node.label}",
                         f"{node.label} parameter {path!r} contains a literal "
-                        f"matching {label} ({_mask(m.group(0))}) — templates "
+                        f"matching {label} ({_mask(m.group(0))}) - templates "
                         "are shared files; whoever imports this gets the key"))
             if spans:
                 continue
@@ -363,7 +363,7 @@ def rule_embedded_secrets(tpl: ParsedTemplate) -> list[Finding]:
                         tpl, "template-embedded-secrets", "CRITICAL",
                         f"URL with embedded credentials in {node.label}",
                         f"{node.label} parameter {path!r} contains a URL with "
-                        f"userinfo ({u.username}:***@{u.hostname}) — the "
+                        f"userinfo ({u.username}:***@{u.hostname}) - the "
                         "password travels with the template"))
                 for qk, qv in parse_qsl(u.query):
                     if qk.lower() in _URL_TOKEN_PARAMS and qv \
@@ -387,7 +387,7 @@ def rule_embedded_secrets(tpl: ParsedTemplate) -> list[Finding]:
                     tpl, "template-embedded-secrets", "CRITICAL",
                     f"credentials block with inline values in {node.label}",
                     f"{node.label} credentials[{cred_type!r}] carries inline "
-                    f"values for {sorted(inline)} — a credential REFERENCE is "
+                    f"values for {sorted(inline)} - a credential REFERENCE is "
                     "id+name only; inline values are the secret itself"))
     return findings
 
@@ -407,14 +407,14 @@ def rule_unknown_outbound(tpl: ParsedTemplate) -> list[Finding]:
                 findings.append(_finding(
                     tpl, "template-unknown-outbound", "INFO",
                     f"outbound call to private host in {node.label}",
-                    f"{node.label} calls {url} — private/loopback host, normal "
+                    f"{node.label} calls {url} - private/loopback host, normal "
                     "for internal tooling (noted, not graded)"))
             else:
                 f = _finding(
                     tpl, "template-unknown-outbound", "HIGH",
                     f"template phones home to {host}",
                     f"{node.label} ({node.type or node.name}) sends data to "
-                    f"{url} — host {host!r} is not on the known-SaaS allowlist; "
+                    f"{url} - host {host!r} is not on the known-SaaS allowlist; "
                     "verify this endpoint before importing")
                 f.details["host"] = host
                 findings.append(f)
@@ -431,7 +431,7 @@ def rule_dangerous_execute(tpl: ParsedTemplate) -> list[Finding]:
             findings.append(_finding(
                 tpl, "template-dangerous-execute", "HIGH",
                 f"dangerous execution node {node.name!r}",
-                f"{node.label} is of type {node.type!r} — it runs arbitrary "
+                f"{node.label} is of type {node.type!r} - it runs arbitrary "
                 "commands/code wherever the template is imported; review what "
                 "it executes before enabling the workflow"))
     return findings
@@ -463,7 +463,7 @@ def rule_exfil_shape(tpl: ParsedTemplate) -> list[Finding]:
             tpl, "template-exfil-shape", "CRITICAL",
             f"data-read + unknown-outbound = exfil shape ({r.name!r} → {host})",
             f"{r.label} reads data (type {r.type!r}) and {s.label} sends "
-            f"outbound to non-allowlisted host {host!r} — the classic "
+            f"outbound to non-allowlisted host {host!r} - the classic "
             "credential/data exfil template shape")
         f.details["host"] = host
         f.details["reader"] = r.name
@@ -484,7 +484,7 @@ def rule_unpinned_community(tpl: ParsedTemplate) -> list[Finding]:
                 findings.append(_finding(
                     tpl, "template-unpinned-community", "MEDIUM",
                     f"community node package {pkg!r} in {node.label}",
-                    f"{node.label} uses {node.type!r} — a community node "
+                    f"{node.label} uses {node.type!r} - a community node "
                     "package: third-party code, unpinned, not audited by n8n; "
                     "it runs with the instance's credentials"))
         elif tpl.ecosystem == "dify":
@@ -497,7 +497,7 @@ def rule_unpinned_community(tpl: ParsedTemplate) -> list[Finding]:
                     tpl, "template-unpinned-community", "MEDIUM",
                     f"unknown tool provider {provider or ptype!r} in {node.label}",
                     f"{node.label} uses tool provider "
-                    f"{provider or ptype!r} — not a Dify builtin; third-party "
+                    f"{provider or ptype!r} - not a Dify builtin; third-party "
                     "tools run with the app's credentials"))
     return findings
 
@@ -611,20 +611,20 @@ def render_text(results: list[dict]) -> str:
     for r in results:
         src = r["source"]
         if "error" in r:
-            lines.append(f"aicheck template — {src} → ERROR: {r['error']}")
+            lines.append(f"aicheck template - {src} → ERROR: {r['error']}")
             continue
         findings = r["findings"]
         summary = r["summary"]
         bits = ", ".join(f"{n} {s}" for s, n in summary.items()) or "clean"
         name = f" {r['name']!r}" if r.get("name") else ""
         lines.append(
-            f"aicheck template — {src} → {r['ecosystem']}{name} "
+            f"aicheck template - {src} → {r['ecosystem']}{name} "
             f"({len(findings)} findings: {bits})")
         for f in findings:
             lines.append(f"  {f['severity']:8} {f['check_id']}: {f['title']}")
             lines.append(f"           evidence: {f['evidence']}")
         if not findings:
-            lines.append("  clean — no template findings")
+            lines.append("  clean - no template findings")
     return "\n".join(lines) + "\n"
 
 
@@ -633,7 +633,7 @@ def main(argv: list[str] | None = None,
     ap = argparse.ArgumentParser(
         prog="aicheck template",
         description="Static security scan of AI workflow templates "
-                    "(n8n / Dify / Flowise) — files, not live targets.")
+                    "(n8n / Dify / Flowise) - files, not live targets.")
     ap.add_argument("sources", nargs="+",
                     help="template file paths or https URLs (N allowed)")
     ap.add_argument("--format", choices=["text", "json"], default="text")
@@ -659,7 +659,7 @@ def main(argv: list[str] | None = None,
             any_error = True
             print(f"error: {src}: {exc}", file=sys.stderr)
             results.append({"source": src, "error": str(exc)})
-        except Exception as exc:  # engine error — never report as clean
+        except Exception as exc:  # engine error - never report as clean
             any_error = True
             print(f"aicheck template engine error: "
                   f"{type(exc).__name__}: {exc}", file=sys.stderr)

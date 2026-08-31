@@ -103,7 +103,7 @@ def check_egress(url: str, *, allow_local: bool = False) -> None:
     parsed = urlparse(url)
     if parsed.scheme == "http":
         print(
-            f"webhook warning: {parsed.scheme}:// URL — drift payload contains "
+            f"webhook warning: {parsed.scheme}:// URL - drift payload contains "
             "estate data and will be sent unencrypted (operator's choice)",
             file=sys.stderr,
         )
@@ -111,7 +111,7 @@ def check_egress(url: str, *, allow_local: bool = False) -> None:
     for ip in _resolve_ips(host):
         if (ip.is_loopback or ip.is_link_local) and not allow_local:
             raise WebhookError(
-                f"webhook host {host!r} resolves to loopback/link-local {ip} — "
+                f"webhook host {host!r} resolves to loopback/link-local {ip} - "
                 "blocked by default (pass --webhook-allow-local to allow)"
             )
 

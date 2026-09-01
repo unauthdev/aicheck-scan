@@ -19,13 +19,19 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
 
-      # same single-sourcing gate as publish-pypi.yml: the tag IS the version
+      # same single-sourcing gate as publish-pypi.yml: the tag IS the version.
+      # floating major tags (v2) match the major version component; full tags
+      # (v2.0.1) must match exactly.
       - name: assert __version__ matches tag
         run: |
           tag="${GITHUB_REF_NAME#v}"
           ver=$(python3 -c "import re,pathlib; t=pathlib.Path('src/aicheck/__init__.py').read_text(); print(re.search(r'__version__\\s*=\\s*\"([^\"]+)\"', t).group(1))")
           echo "tag=$tag version=$ver"
-          test "$ver" = "$tag"
+          if [[ "$tag" == *.* ]]; then
+            test "$ver" = "$tag"
+          else
+            test "${ver%%.*}" = "$tag"
+          fi
 
       # derive the floating major tag from the ref: v2.1.0 -> v2 (never a
       # hardcoded major — a v2 tag must not overwrite the v1 image)
